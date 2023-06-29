@@ -1,16 +1,23 @@
-// need location
-
+//
+// QUERY SELECTORS
 var searchButton = $("#search-button");
+var dailyWeatherEl = $("#daily-weather");
+
+// from openweather
+
 var apiKey = "dab947fed8047b6c620cec62fe4fded5";
+
+// retrieves informtation from open weather, plugs in api key from openweather
 var dailyURL = `https://api.openweathermap.org/data/2.5/weather?appid=${apiKey}&units=imperial&q=`;
 var forecastURL = `https://api.openweathermap.org/data/2.5/forecast?appid=${apiKey}&units=imperial&q=`;
-var dailyWeatherEl = $("#daily-weather");
+
+//
+// FUNCTIONS
 
 async function submitSearch(event) {
   event.preventDefault();
   var userInput = $("#search-form").val();
   await dailyWeather(userInput);
-  //   await forecast(userInput);
   //   console.log(userInput);
 }
 
@@ -21,6 +28,9 @@ async function dailyWeather(city) {
     type: "GET",
   });
   //   console.log(response);
+
+  //   appended daily weather
+  //   lists current temp, humidty, windspeed in searched city
   var template = `<div class="card">
     <div class="card-body">
     <h4 class="card-title">
@@ -31,18 +41,23 @@ async function dailyWeather(city) {
     <p class="card-text">Windspeed: ${response.wind.speed} mph</p>
     </div>
     </div>`;
+
+  // places daily/current weather info in document
   dailyWeatherEl.append(template);
+
+  // triggers forecast data to run
   await forecast(city);
-  // ^^^ turn back on when working on forecast
 }
 
-// will need 5
 async function forecast(city) {
   var response = await $.ajax({
     url: forecastURL + city,
     type: "GET",
   });
-  console.log(response);
+  //   console.log(response);
+
+  //   appended 5-day forecast
+  //   list projected temp, humidty, windspeed at noon from tomorrow's subjective date and the following 4 days in searched city
   var template = `<div class=card>
   
   <div class=card-body>
@@ -82,8 +97,10 @@ async function forecast(city) {
   <p class="card-text">Humidity: ${response.list[36].main.humidity} %</p>
   <p class="card-text">Windspeed: ${response.list[36].wind.speed} mph</p>
   </div>`;
+
+  //   places 5-day forecast template in document
   dailyWeatherEl.append(template);
 }
 
-//
+// EVENT LISTENER(S)
 searchButton.on("click", submitSearch);
